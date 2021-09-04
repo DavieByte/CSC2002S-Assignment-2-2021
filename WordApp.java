@@ -25,10 +25,8 @@ public class WordApp
 	static 	Score score = new Score();
 
 	static WordPanel w;
-	
-	static Jlabel[] labels; // 
-	
-	
+	 
+
 	public static void setupGUI(int frameX,int frameY,int yLimit) 
 	{
 
@@ -52,59 +50,139 @@ public class WordApp
         txt.add(caught);
 	    txt.add(missed);
 	    txt.add(scr);
-    
-	    //[snip]
+    	w.setDone();
   
 	   final JTextField textEntry = new JTextField("",20);
 	   textEntry.addActionListener(new ActionListener()
 	   {
 	      public void actionPerformed(ActionEvent evt) 
 		  {
-	         String text = textEntry.getText();
-	          //[snip]
-	         textEntry.setText("");
-	         textEntry.requestFocus();
+	        String text = textEntry.getText();
+			for (int i = 0; i < words.length; i++)
+			{
+			    if(words[i].matchWord(text)) //If we have a match somewhere
+				{
+					//System.out.println("bumping by " +text.length());
+					score.caughtWord(text.length()); //Add score value
+					if (score.getTotal() == 15)break; //if we've gone over, end this right away (no need to get new word)
+					words[i].resetWord(); //Reset it for a new word     
+				}
+			}
+		    caught.setText("Caught: " + score.getCaught() + "    ");
+		    missed.setText("Missed:" + score.getMissed()+ "    ");
+		    scr.setText("Score:" + score.getScore()+ "    ");
+
+	        textEntry.setText("");
+	        textEntry.requestFocus();
 	      }
-	   });
+	    });
 	   
-	   txt.add(textEntry);
-	   txt.setMaximumSize( txt.getPreferredSize() );
-	   g.add(txt);
+	    txt.add(textEntry);
+	    txt.setMaximumSize( txt.getPreferredSize() );
+	    g.add(txt);
 	    
-	   JPanel b = new JPanel();
-      b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS)); 
-	   JButton startB = new JButton("Start");;
-		
-			// add the listener to the jbutton to handle the "pressed" event
-		startB.addActionListener(new ActionListener()
+	    JPanel b = new JPanel();
+        b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS)); 
+	    JButton startB = new JButton("Start");;
+	    startB.addActionListener(new ActionListener()
 		{
 		   public void actionPerformed(ActionEvent e)
 		   {
-		      //[snip]
-		      textEntry.requestFocus();  //return focus to the text entry field
+			   if (w.isDone()) //If this is set to not be busy
+			   {
+				   Thread thread = new Thread(w); //Make a new thread
+				   thread.start();
+			   } 
+			   else
+			   {
+				   System.out.println("Game in progress."); //If already running
+			   } 
+			   textEntry.requestFocus();  //return focus to the text entry field
 		   }
 		});
-		JButton endB = new JButton("End");;
-			
-				// add the listener to the jbutton to handle the "pressed" event
+		
+		JButton endB = new JButton("End");;	
+	    // add the listener to the jbutton to handle the "pressed" event
 		endB.addActionListener(new ActionListener()
 		{
 		   public void actionPerformed(ActionEvent e)
 		   {
-		      //[snip]
+			   w.setDone(); //Will make the thread end and reset panel
+			   score.resetScore(); //Reset game scores and stuff
 		   }
 		});
+
+		JButton quitB = new JButton("Quit");
+        // add listener for quit event
+        quitB.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("Quitting...");
+                System.exit(0); //Terminate program
+            }
+        });
+            
+        JButton highB = new JButton("Highscore");
+        // add listener for highscore request
+        highB.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                if (score.getHigh() == 0) System.out.println("No highscore yet..."); //If the score is 0, there is no "score" to show
+                else System.out.println("Current highscore: " +score.getHigh() +" [" +score.getName() +"]"); //Display details
+            }
+        });
 		
 		b.add(startB);
-		b.add(endB);
-		
-		g.add(b);
+        b.add(endB);
+        b.add(highB);
+        b.add(quitB);
+        g.add(b);
     	
-      frame.setLocationRelativeTo(null);  // Center window on screen.
-      frame.add(g); //add contents to window
-      frame.setContentPane(g);     
+        frame.setLocationRelativeTo(null);  // Center window on screen.
+        frame.add(g); //add contents to window
+        frame.setContentPane(g);     
        	//frame.pack();  // don't do this - packs it into small space
-      frame.setVisible(true);
+        frame.setVisible(true);
+	
+
+	Runnable scorer = new Runnable() //Need to make a runnable so we can initialise a thread for tracking score and updating
+    {
+        public void run()
+        {
+            while(true) //Should be going as well as we are in this part of the code
+            {
+                score.setMissed(w.getDropped()); //Obtained miss-word count since its over in WordPanel (the other score values are updating under interrupts)
+                //w.resetDropped();
+                caught.setText("Caught: " + score.getCaught() + "    "); //Update GUI
+                missed.setText("Missed:" + score.getMissed()+ "    ");
+                scr.setText("Score:" + score.getScore()+ "    ");
+                if (score.getTotal() >= totalWords) //If we've done over, it's time to wrap up the program
+                {
+                    w.setDone();
+                    if (score.getScore() == 0)System.out.println("You...didn't get a single one"); //If the user got a big fat zero
+                    else System.out.println("Congradulations, you won! Total score: " +score.getScore() +"\nCaught: " +score.getCaught() +" | Missed: " +score.getMissed());
+                    int temp = score.getScore();
+                    if (temp > score.getHigh()) //Check if eligible for highscore
+                    {
+                    	String tempNm = JOptionPane.showInputDialog("Highscore achieved! Enter your name: ");
+                        System.out.println("Saving ...");
+                        score.setHigh(temp);
+                         score.setName(tempNm);
+                    }
+                    else
+                    {
+                        if (score.getHigh() != 0) System.out.println("Current highscore: " +score.getHigh() +" [" +score.getName() +"]");
+                        else System.out.println("No highscore yet...");
+                    } //If the user gets 0, we treat it as if there's still no highscore (because 0 is not a score)
+                    score.resetScore();
+                }
+            }
+        }
+    };
+                Thread ts = new Thread(scorer);
+                ts.start(); //Get this thread going
 	}
 
    public static String[] getDictFromFile(String filename) {

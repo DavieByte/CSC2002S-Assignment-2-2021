@@ -9,6 +9,9 @@ import javax.swing.JPanel;
 
 public class WordPanel extends JPanel implements Runnable 
 {
+		/**
+     	* Global Variables
+     	*/	
 		public static volatile boolean done;
 		private WordRecord[] words;
 		private int noWords;
