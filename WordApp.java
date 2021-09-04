@@ -204,7 +204,8 @@ public class WordApp
 		return dictStr;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) 
+	{
     	
 		//deal with command line arguments
 		totalWords=Integer.parseInt(args[0]);  //total words to fall
