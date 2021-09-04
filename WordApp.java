@@ -1,19 +1,15 @@
-package skeletonCodeAssgnmt2;
-
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-
 import java.util.Scanner;
 import java.util.concurrent.*;
 //model is separate from the view.
 
-public class WordApp {
+public class WordApp 
+{
 //shared variables
 	static int noWords=4;
 	static int totalWords;
@@ -30,36 +26,40 @@ public class WordApp {
 
 	static WordPanel w;
 	
+	static Jlabel[] labels; // 
 	
 	
-	public static void setupGUI(int frameX,int frameY,int yLimit) {
+	public static void setupGUI(int frameX,int frameY,int yLimit) 
+	{
+
 		// Frame init and dimensions
     	JFrame frame = new JFrame("WordGame"); 
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	frame.setSize(frameX, frameY);
-      JPanel g = new JPanel();
-      g.setLayout(new BoxLayout(g, BoxLayout.PAGE_AXIS)); 
-      g.setSize(frameX,frameY);
+        frame.setSize(frameX, frameY);
+        JPanel g = new JPanel();
+        g.setLayout(new BoxLayout(g, BoxLayout.PAGE_AXIS)); 
+        g.setSize(frameX,frameY);
     	
 		w = new WordPanel(words,yLimit);
 		w.setSize(frameX,yLimit+100);
-	   g.add(w); 
+	    g.add(w); 
 	    
-      JPanel txt = new JPanel();
-      txt.setLayout(new BoxLayout(txt, BoxLayout.LINE_AXIS)); 
-      JLabel caught =new JLabel("Caught: " + score.getCaught() + "    ");
-      JLabel missed =new JLabel("Missed:" + score.getMissed()+ "    ");
-      JLabel scr =new JLabel("Score:" + score.getScore()+ "    ");    
-      txt.add(caught);
-	   txt.add(missed);
-	   txt.add(scr);
+        JPanel txt = new JPanel();
+        txt.setLayout(new BoxLayout(txt, BoxLayout.LINE_AXIS)); 
+        JLabel caught =new JLabel("Caught: " + score.getCaught() + "    ");
+        JLabel missed =new JLabel("Missed:" + score.getMissed()+ "    ");
+        JLabel scr =new JLabel("Score:" + score.getScore()+ "    ");    
+        txt.add(caught);
+	    txt.add(missed);
+	    txt.add(scr);
     
 	    //[snip]
   
 	   final JTextField textEntry = new JTextField("",20);
 	   textEntry.addActionListener(new ActionListener()
 	   {
-	      public void actionPerformed(ActionEvent evt) {
+	      public void actionPerformed(ActionEvent evt) 
+		  {
 	         String text = textEntry.getText();
 	          //[snip]
 	         textEntry.setText("");
