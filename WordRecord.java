@@ -1,6 +1,4 @@
-package skeletonCodeAssgnmt2;
-
-public class WordRecord {
+public class WordRecord { // unedited
 	private String text;
 	private  int x;
 	private int y;

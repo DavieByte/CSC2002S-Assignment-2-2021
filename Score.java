@@ -16,12 +16,12 @@ public class Score
 		
 	// all getters and setters must be synchronized
 	
-	public int getMissed() 
+	public synchronized int getMissed() 
 	{
 		return missedWords.get();
 	}
 
-	public int getCaught() 
+	public synchronized  int getCaught() 
 	{
 		return caughtWords.get();
 	}
@@ -31,12 +31,12 @@ public class Score
 		return missedWords.addAndGet(caughtWords.get());
 	}
 
-	public int getScore() 
+	public synchronized int getScore() 
 	{
 		return gameScore.get();
 	}
 	
-	public void missedWord() 
+	public synchronized  void missedWord() 
 	{
 		missedWords.incrementAndGet();
 	}
@@ -47,7 +47,7 @@ public class Score
 		gameScore.addAndGet(length);
 	}
 
-	public void incrWrongWord()
+	public synchronized void incrWrongWord()
 	{
 		wrongWords.addAndGet();
 	}
