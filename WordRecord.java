@@ -33,7 +33,7 @@ public class WordRecord { // unedited
 		this.maxY=maxY;
 	}
 	
-// all getters and setters must be synchronized
+// all getters and setters have been synchronized
 	public synchronized  void setY(int y) {
 		if (y>maxY) {
 			y=maxY;

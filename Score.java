@@ -4,14 +4,12 @@ public class Score
 	private AtomicInteger missedWords;
 	private AtomicInteger caughtWords;
 	private AtomicInteger gameScore;
-	private AtomicInteger wrongWords;
 	
 	Score() 
 	{
 		missedWords = new AtomicInteger(0);
 		caughtWords = new AtomicInteger(0);
 		gameScore = new AtomicInteger(0);
-		wrongWords = new AtomicInteger(0);
 	}
 		
 	// all getters and setters must be synchronized
@@ -19,6 +17,11 @@ public class Score
 	public synchronized int getMissed() 
 	{
 		return missedWords.get();
+	}
+
+	public synchronized void setMissed(int value)
+	{
+		missedWords.set(value);
 	}
 
 	public synchronized  int getCaught() 
@@ -47,16 +50,10 @@ public class Score
 		gameScore.addAndGet(length);
 	}
 
-	public synchronized void incrWrongWord()
-	{
-		wrongWords.addAndGet();
-	}
-
 	public synchronized void resetScore() 
 	{
 		caughtWords.set(0);
 		missedWords.set(0);
 		gameScore.set(0);
-		wrongWords.set(0);
 	}
 }
