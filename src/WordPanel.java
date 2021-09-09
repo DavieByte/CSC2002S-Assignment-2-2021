@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WordPanel extends JPanel implements Runnable 
+public class WordPanel extends JPanel implements Runnable //This class mostly acts as the controller
 {
 		/**
      	* Global Variables
